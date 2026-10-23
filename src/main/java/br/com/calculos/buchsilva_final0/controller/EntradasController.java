@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import br.com.calculos.buchsilva_final0.entity.Entradas;
 import br.com.calculos.buchsilva_final0.service.EntradasService;
-
+import jakarta.validation.Valid;
 @RestController
 @RequestMapping("/api/entradas")
 public class EntradasController {
@@ -26,8 +26,10 @@ public class EntradasController {
 	@Autowired
 	private EntradasService entradasService;
 	
+	
+	
 	@PostMapping("/save")
-	public ResponseEntity<String> save (@RequestBody Entradas entradas){
+	public ResponseEntity<String> save(@Valid @RequestBody Entradas entradas){
 		
 		try {
 			String mensagem = this.entradasService.save(entradas);
@@ -40,7 +42,9 @@ public class EntradasController {
 	
 	
 	@PutMapping("/updateById/{id}")
-	public ResponseEntity<String>  updateById(@RequestBody Entradas entradas,@PathVariable Long id) {
+	public ResponseEntity<String> updateById(
+	        @Valid @RequestBody Entradas entradas,
+	        @PathVariable Long id) {
 		try {
 			String mensagem = this.entradasService.updateById(entradas, id); 
 			return new ResponseEntity<>(mensagem, HttpStatus.OK);

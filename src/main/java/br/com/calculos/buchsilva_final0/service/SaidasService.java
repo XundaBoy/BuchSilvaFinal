@@ -22,11 +22,19 @@ public String save (Saidas saidas) {
 	}
 
 	
-	public String updateById(Saidas saidas, Long id) {
-		saidas.setId(id);
-		this.saidasRepository.save(saidas);
-		return "Saida atualizada com sucesso";
-	}
+public String updateById(Saidas saidas, Long id) {
+
+    Saidas saidaExistente = this.saidasRepository
+            .findById(id)
+            .orElseThrow(() -> new RuntimeException("Saída não encontrada"));
+
+    saidaExistente.setNomeSaida(saidas.getNomeSaida());
+    saidaExistente.setValor(saidas.getValor());
+
+    this.saidasRepository.save(saidaExistente);
+
+    return "Saída atualizada com sucesso";
+}
 	
 	public String deleteById (Long id) {	
 		

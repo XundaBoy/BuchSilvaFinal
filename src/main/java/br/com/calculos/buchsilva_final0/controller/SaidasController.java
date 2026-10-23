@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import br.com.calculos.buchsilva_final0.entity.Saidas;
 import br.com.calculos.buchsilva_final0.service.SaidasService;
-
+import jakarta.validation.Valid;
 @RestController
 @RequestMapping("/api/saidas")
 public class SaidasController {
@@ -25,8 +25,7 @@ public class SaidasController {
     private SaidasService saidasService;
 
     @PostMapping("/save")
-    public ResponseEntity<String> save(@RequestBody Saidas saidas) {
-
+    public ResponseEntity<String> save(@Valid @RequestBody Saidas saidas) {
         try {
             String mensagem = this.saidasService.save(saidas);
             return new ResponseEntity<>(mensagem, HttpStatus.OK);
@@ -37,7 +36,9 @@ public class SaidasController {
     }
 
     @PutMapping("/updateById/{id}")
-    public ResponseEntity<String> updateById(@RequestBody Saidas saidas, @PathVariable Long id) {
+    public ResponseEntity<String> updateById(
+            @Valid @RequestBody Saidas saidas,
+            @PathVariable Long id) {
 
         try {
             String mensagem = this.saidasService.updateById(saidas, id);

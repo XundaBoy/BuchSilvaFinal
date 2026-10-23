@@ -6,6 +6,10 @@ import java.time.LocalDateTime;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
+import jakarta.validation.constraints.DecimalMin;
+import jakarta.validation.constraints.Digits;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
@@ -23,8 +27,15 @@ public class Saidas {
 	@jakarta.persistence.Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long Id;
-    private String nomeSaida;
-    private LocalDateTime dataHora = LocalDateTime.now();
-    private BigDecimal valor;
+	@NotBlank(message = "O nome da saída é obrigatório")
+	private String nomeSaida;
+
+	private LocalDateTime dataHora = LocalDateTime.now();
+
+	@NotNull(message = "O valor é obrigatório")
+	
+	@DecimalMin(value = "0.01", message = "O valor deve ser maior que zero")
+	@Digits(integer = 30, fraction = 2, message = "O valor deve ter no máximo 2 casas decimais")
+	private BigDecimal valor;
 	
 }

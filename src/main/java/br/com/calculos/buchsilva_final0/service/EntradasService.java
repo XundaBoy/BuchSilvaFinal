@@ -22,9 +22,17 @@ public class EntradasService {
 
 	
 	public String updateById(Entradas entradas, Long id) {
-		entradas.setId(id);
-		this.entradasRepository.save(entradas);
-		return "Entrada atualizada com sucesso";
+
+	    Entradas entradaExistente = this.entradasRepository
+	            .findById(id)
+	            .orElseThrow(() -> new RuntimeException("Entrada não encontrada"));
+
+	    entradaExistente.setNomeEntrada(entradas.getNomeEntrada());
+	    entradaExistente.setValor(entradas.getValor());
+
+	    this.entradasRepository.save(entradaExistente);
+
+	    return "Entrada atualizada com sucesso";
 	}
 	
 	public String deleteById (Long id) {	
