@@ -1,5 +1,5 @@
 package br.com.calculos.buchsilva_final0.controller;
-
+import org.springframework.web.bind.annotation.CrossOrigin;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +19,7 @@ import br.com.calculos.buchsilva_final0.service.SaidasService;
 import jakarta.validation.Valid;
 @RestController
 @RequestMapping("/api/saidas")
+
 public class SaidasController {
 
     @Autowired

@@ -1,4 +1,5 @@
 package br.com.calculos.buchsilva_final0.controller;
+import org.springframework.web.bind.annotation.CrossOrigin;
 
 import java.util.List;
 
@@ -21,6 +22,7 @@ import br.com.calculos.buchsilva_final0.service.EntradasService;
 import jakarta.validation.Valid;
 @RestController
 @RequestMapping("/api/entradas")
+
 public class EntradasController {
 	
 	@Autowired

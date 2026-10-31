@@ -1,5 +1,5 @@
 package br.com.calculos.buchsilva_final0.controller;
-
+import org.springframework.web.bind.annotation.CrossOrigin;
 import java.math.BigDecimal;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +13,7 @@ import br.com.calculos.buchsilva_final0.service.SaldoService;
 
 @RestController
 @RequestMapping("/api/saldo")
+
 public class SaldoController {
 
 	 @Autowired
