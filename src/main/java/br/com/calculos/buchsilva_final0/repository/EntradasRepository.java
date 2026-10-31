@@ -1,3 +1,4 @@
+
 package br.com.calculos.buchsilva_final0.repository;
 
 import java.math.BigDecimal;
@@ -7,8 +8,11 @@ import org.springframework.data.jpa.repository.Query;
 
 import br.com.calculos.buchsilva_final0.entity.Entradas;
 
-public interface EntradasRepository extends JpaRepository<Entradas, Long>{
-	
-	 @Query("SELECT SUM(e.valor) FROM Entradas e")
-	    BigDecimal somarEntradas();
+public interface EntradasRepository
+        extends JpaRepository<Entradas, Long> {
+
+    // SOMAR AS ENTRADAS CONVERTIDAS PARA DOLAR
+    @Query("SELECT SUM(e.valorUsd) FROM Entradas e")
+    BigDecimal somarEntradas();
+
 }

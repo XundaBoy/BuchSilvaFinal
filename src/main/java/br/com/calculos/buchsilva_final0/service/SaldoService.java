@@ -1,8 +1,8 @@
+
 package br.com.calculos.buchsilva_final0.service;
 
 import java.math.BigDecimal;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import br.com.calculos.buchsilva_final0.repository.EntradasRepository;
@@ -11,26 +11,39 @@ import br.com.calculos.buchsilva_final0.repository.SaidasRepository;
 @Service
 public class SaldoService {
 
-	 @Autowired
-	    private EntradasRepository entradasRepository;
+    private final EntradasRepository entradasRepository;
+    private final SaidasRepository saidasRepository;
 
-	    @Autowired
-	    private SaidasRepository saidasRepository;
+    public SaldoService(
+            EntradasRepository entradasRepository,
+            SaidasRepository saidasRepository) {
 
-	    public BigDecimal calcularSaldo() {
+        this.entradasRepository = entradasRepository;
+        this.saidasRepository = saidasRepository;
+    }
 
-	        BigDecimal entradas = entradasRepository.somarEntradas();
-	        BigDecimal saidas = saidasRepository.somarSaidas();
+    // TOTAL DE ENTRADAS EM USD
+    public BigDecimal calcularTotalEntradas() {
 
-	        if (entradas == null) {
-	            entradas = BigDecimal.ZERO;
-	        }
+        BigDecimal total = entradasRepository.somarEntradas();
 
-	        if (saidas == null) {
-	            saidas = BigDecimal.ZERO;
-	        }
+        return total != null ? total : BigDecimal.ZERO;
+    }
 
-	        return entradas.subtract(saidas);
-	    }
-	
+    // TOTAL DE SAIDAS EM USD
+    public BigDecimal calcularTotalSaidas() {
+
+        BigDecimal total = saidasRepository.somarSaidas();
+
+        return total != null ? total : BigDecimal.ZERO;
+    }
+
+    // SALDO ACUMULADO EM USD
+    public BigDecimal calcularSaldo() {
+
+        BigDecimal entradas = calcularTotalEntradas();
+        BigDecimal saidas = calcularTotalSaidas();
+
+        return entradas.subtract(saidas);
+    }
 }
