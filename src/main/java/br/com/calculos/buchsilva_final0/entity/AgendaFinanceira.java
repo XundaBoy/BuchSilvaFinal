@@ -1,3 +1,4 @@
+
 package br.com.calculos.buchsilva_final0.entity;
 
 import java.math.BigDecimal;
@@ -17,7 +18,7 @@ import jakarta.persistence.Table;
 public class AgendaFinanceira {
 
     // =====================================
-    // IDENTIFICADOR DO REGISTRO
+    // IDENTIFICADOR
     // =====================================
 
     @Id
@@ -51,14 +52,14 @@ public class AgendaFinanceira {
     private MoedaAgenda moeda;
 
     // =====================================
-    // VENCIMENTO INFORMADO PELO USUARIO
+    // DATA DE VENCIMENTO
     // =====================================
 
     @Column(name = "data_hora", nullable = false)
     private LocalDateTime dataHora;
 
     // =====================================
-    // PAGAR OU RECEBER
+    // TIPO: PAGAR OU RECEBER
     // =====================================
 
     @Enumerated(EnumType.STRING)
@@ -66,12 +67,23 @@ public class AgendaFinanceira {
     private TipoAgenda tipo;
 
     // =====================================
-    // PENDENTE OU CONFIRMADO
+    // STATUS: PENDENTE OU CONFIRMADO
     // =====================================
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 12)
     private StatusAgenda status = StatusAgenda.PENDENTE;
+
+    // =====================================
+    // NOVO CAMPO: DATA DE CONFIRMACAO
+    // =====================================
+
+    // Preenchido somente quando o usuario
+    // clicar no V verde para confirmar.
+    // Pode ser null para registros pendentes.
+
+    @Column(name = "data_confirmacao")
+    private LocalDateTime dataConfirmacao;
 
     // =====================================
     // CONSTRUTOR VAZIO PARA O JPA
@@ -81,7 +93,7 @@ public class AgendaFinanceira {
     }
 
     // =====================================
-    // CONSTRUTOR PARA NOVO CADASTRO
+    // CONSTRUTOR PARA CADASTRO
     // =====================================
 
     public AgendaFinanceira(
@@ -97,13 +109,15 @@ public class AgendaFinanceira {
         this.dataHora = dataHora;
         this.tipo = tipo;
 
-        // TODA NOVA CONTA COMECA PENDENTE
+        // TODO NOVO REGISTRO COMECA PENDENTE
         this.status = StatusAgenda.PENDENTE;
+
+        // AINDA NAO FOI CONFIRMADO
+        this.dataConfirmacao = null;
     }
 
     // =====================================
-    // ATUALIZAR DADOS
-    // NAO ALTERAR TIPO NEM STATUS
+    // EDITAR CONTA
     // =====================================
 
     public void atualizarDados(
@@ -116,14 +130,21 @@ public class AgendaFinanceira {
         this.valor = valor;
         this.moeda = moeda;
         this.dataHora = dataHora;
+
+        // PRESERVAR TIPO, STATUS E
+        // DATA DE CONFIRMACAO
     }
 
     // =====================================
-    // CONFIRMAR CONTA
+    // CONFIRMAR CONTA PELO V VERDE
     // =====================================
 
     public void confirmar() {
+
         this.status = StatusAgenda.CONFIRMADO;
+
+        // REGISTRAR QUANDO FOI CONFIRMADA
+        this.dataConfirmacao = LocalDateTime.now();
     }
 
     // =====================================
@@ -156,5 +177,9 @@ public class AgendaFinanceira {
 
     public StatusAgenda getStatus() {
         return status;
+    }
+
+    public LocalDateTime getDataConfirmacao() {
+        return dataConfirmacao;
     }
 }
