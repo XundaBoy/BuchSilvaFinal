@@ -190,7 +190,7 @@ public class SecurityConfig {
         );
 
         config.setAllowedMethods(
-            List.of("GET", "POST", "PUT", "DELETE", "OPTIONS")
+            List.of("GET", "POST", "PUT", "DELETE","PATCH", "OPTIONS")
         );
 
         config.setAllowedHeaders(
@@ -242,16 +242,17 @@ public class SecurityConfig {
 
                 // ADMIN E VISUALIZADOR PODEM CONSULTAR
                 .requestMatchers(
-                    HttpMethod.GET,
-                    "/api/entradas/**",
-                    "/api/saidas/**",
-                    "/api/saldo",
-                    "/api/saldo/**"
-                ).hasAnyRole(
-                    "ADMIN",
-                    "VISUALIZADOR"
-                )
-
+                	    HttpMethod.GET,
+                	    "/api/entradas/**",
+                	    "/api/saidas/**",
+                	    "/api/saldo",
+                	    "/api/saldo/**",
+                	    "/api/agenda",
+                	    "/api/agenda/**"
+                	).hasAnyRole(
+                	    "ADMIN",
+                	    "VISUALIZADOR"
+                	)
                 // SOMENTE ADMIN PODE MODIFICAR DADOS
                 .requestMatchers("/api/**")
                 .hasRole("ADMIN")
