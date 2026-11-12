@@ -180,17 +180,23 @@ public class SecurityConfig {
     // PERMITIR O ANGULAR
     // =====================================
 
+
+    // =====================================
+    // PERMITIR O ANGULAR
+    // =====================================
+
     @Bean
-    public UrlBasedCorsConfigurationSource corsConfigurationSource() {
+    public UrlBasedCorsConfigurationSource corsConfigurationSource(
+            @Value("${app.cors.allowed-origin}") String allowedOrigin) {
 
         var config = new CorsConfiguration();
 
         config.setAllowedOrigins(
-            List.of("http://localhost:4200")
+            List.of(allowedOrigin)
         );
 
         config.setAllowedMethods(
-            List.of("GET", "POST", "PUT", "DELETE","PATCH", "OPTIONS")
+            List.of("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS")
         );
 
         config.setAllowedHeaders(
@@ -206,6 +212,7 @@ public class SecurityConfig {
 
         return source;
     }
+
 
     // =====================================
     // REGRAS DE ACESSO À API
