@@ -1,10 +1,15 @@
 
 package br.com.calculos.buchsilva_final0.integration;
 
-import static org.junit.jupiter.api.Assertions.*;
 import static org.hamcrest.Matchers.hasItem;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -14,19 +19,20 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.com.calculos.buchsilva_final0.entity.Saidas;
 import br.com.calculos.buchsilva_final0.repository.SaidasRepository;
-
 import jakarta.persistence.EntityManager;
 
 @SpringBootTest
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
 @Transactional
+@WithMockUser(roles = "ADMIN")
 public class SaidasIntegrationTest {
 
     @Autowired
@@ -47,7 +53,8 @@ public class SaidasIntegrationTest {
         String json = """
                 {
                     "nomeSaida": "Conta de luz",
-                    "valor": 250.50
+                    "valor": 250.50,
+                     "moedaOriginal": "USD"
                 }
                 """;
 
@@ -81,7 +88,8 @@ public class SaidasIntegrationTest {
         String json = """
                 {
                     "nomeSaida": "Conta de água",
-                    "valor": 180.00
+                    "valor": 180.00,
+                     "moedaOriginal": "USD"
                 }
                 """;
 

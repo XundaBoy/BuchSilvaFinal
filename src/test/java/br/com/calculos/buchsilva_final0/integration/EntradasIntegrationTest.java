@@ -1,10 +1,16 @@
 
 package br.com.calculos.buchsilva_final0.integration;
 
-import static org.junit.jupiter.api.Assertions.*;
+
 import static org.hamcrest.Matchers.hasItem;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -14,6 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,6 +32,7 @@ import br.com.calculos.buchsilva_final0.repository.EntradasRepository;
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
 @Transactional
+@WithMockUser(roles = "ADMIN")
 public class EntradasIntegrationTest {
 
     @Autowired
@@ -42,7 +50,8 @@ public class EntradasIntegrationTest {
         String json = """
                 {
                     "nomeEntrada": "Salário",
-                    "valor": 2500.50
+                    "valor": 2500.50,
+                    "moedaOriginal": "USD"
                 }
                 """;
 
@@ -71,7 +80,8 @@ public class EntradasIntegrationTest {
         String json = """
                 {
                     "nomeEntrada": "Salário atualizado",
-                    "valor": 3000.00
+                    "valor": 3000.00,
+                    "moedaOriginal": "USD"
                 }
                 """;
 

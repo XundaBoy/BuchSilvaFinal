@@ -1,9 +1,9 @@
 
 package br.com.calculos.buchsilva_final0.integration;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.math.BigDecimal;
 
@@ -12,6 +12,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,6 +29,7 @@ import br.com.calculos.buchsilva_final0.repository.SaidasRepository;
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
 @Transactional
+@WithMockUser(roles = "ADMIN")
 public class SaldoIntegrationTest {
 
     @Autowired
@@ -42,7 +44,10 @@ public class SaldoIntegrationTest {
     @Autowired
     private ObjectMapper objectMapper;
 
-    // LIMPA OS REGISTROS PARA CADA TESTE
+    // =====================================
+    // PREPARAR O BANCO DE TESTES
+    // =====================================
+
     @BeforeEach
     void prepararBanco() {
 
@@ -53,27 +58,50 @@ public class SaldoIntegrationTest {
         entradasRepository.flush();
     }
 
-    // MÉTODO AUXILIAR - CADASTRAR ENTRADA
+    // =====================================
+    // METODO AUXILIAR - CADASTRAR ENTRADA
+    // =====================================
+
     private void cadastrarEntrada(String nome, String valor) {
 
         Entradas entrada = new Entradas();
+
         entrada.setNomeEntrada(nome);
-        entrada.setValor(new BigDecimal(valor));
+
+        BigDecimal valorOriginal = new BigDecimal(valor);
+
+        entrada.setValor(valorOriginal);
+
+        // OS TESTES UTILIZAM VALORES EM USD
+        entrada.setValorUsd(valorOriginal);
 
         entradasRepository.saveAndFlush(entrada);
     }
 
-    // MÉTODO AUXILIAR - CADASTRAR SAÍDA
+    // =====================================
+    // METODO AUXILIAR - CADASTRAR SAIDA
+    // =====================================
+
     private void cadastrarSaida(String nome, String valor) {
 
         Saidas saida = new Saidas();
+
         saida.setNomeSaida(nome);
-        saida.setValor(new BigDecimal(valor));
+
+        BigDecimal valorOriginal = new BigDecimal(valor);
+
+        saida.setValor(valorOriginal);
+
+        // OS TESTES UTILIZAM VALORES EM USD
+        saida.setValorUsd(valorOriginal);
 
         saidasRepository.saveAndFlush(saida);
     }
 
-    // MÉTODO AUXILIAR - CONSULTAR SALDO PELA API
+    // =====================================
+    // METODO AUXILIAR - CONSULTAR SALDO
+    // =====================================
+
     private BigDecimal consultarSaldo() throws Exception {
 
         String resposta = mockMvc.perform(get("/api/saldo"))
@@ -84,31 +112,42 @@ public class SaldoIntegrationTest {
 
         JsonNode json = objectMapper.readTree(resposta);
 
-        // Caso a API retorne diretamente um número
+        // CASO A API RETORNE UM NUMERO
         if (json.isNumber()) {
             return json.decimalValue();
         }
 
-        // Caso retorne um objeto com o campo "saldo"
+        // CASO A API RETORNE UM OBJETO
         if (json.isObject() && json.has("saldo")) {
-            return new BigDecimal(json.get("saldo").asText());
+            return new BigDecimal(
+                    json.get("saldo").asText()
+            );
         }
 
         throw new AssertionError(
-                "Formato inesperado da resposta: " + resposta);
+                "Formato inesperado da resposta: " + resposta
+        );
     }
 
-    // TESTE 1 - SALDO SEM MOVIMENTAÇÕES
+    // =====================================
+    // TESTE 1 - SALDO SEM MOVIMENTACOES
+    // =====================================
+
     @Test
     void deveRetornarSaldoZeroSemMovimentacoes() throws Exception {
 
         BigDecimal saldo = consultarSaldo();
 
-        assertEquals(0,
-                saldo.compareTo(new BigDecimal("0.00")));
+        assertEquals(
+                0,
+                saldo.compareTo(new BigDecimal("0.00"))
+        );
     }
 
+    // =====================================
     // TESTE 2 - SALDO COM APENAS ENTRADAS
+    // =====================================
+
     @Test
     void deveCalcularSaldoComApenasEntradas() throws Exception {
 
@@ -116,11 +155,16 @@ public class SaldoIntegrationTest {
 
         BigDecimal saldo = consultarSaldo();
 
-        assertEquals(0,
-                saldo.compareTo(new BigDecimal("1500.00")));
+        assertEquals(
+                0,
+                saldo.compareTo(new BigDecimal("1500.00"))
+        );
     }
 
-    // TESTE 3 - SALDO COM ENTRADAS E SAÍDAS
+    // =====================================
+    // TESTE 3 - ENTRADAS MENOS SAIDAS
+    // =====================================
+
     @Test
     void deveSubtrairSaidasDasEntradas() throws Exception {
 
@@ -130,11 +174,16 @@ public class SaldoIntegrationTest {
 
         BigDecimal saldo = consultarSaldo();
 
-        assertEquals(0,
-                saldo.compareTo(new BigDecimal("1500.00")));
+        assertEquals(
+                0,
+                saldo.compareTo(new BigDecimal("1500.00"))
+        );
     }
 
+    // =====================================
     // TESTE 4 - SALDO NEGATIVO
+    // =====================================
+
     @Test
     void deveRetornarSaldoNegativo() throws Exception {
 
@@ -144,11 +193,16 @@ public class SaldoIntegrationTest {
 
         BigDecimal saldo = consultarSaldo();
 
-        assertEquals(0,
-                saldo.compareTo(new BigDecimal("-500.00")));
+        assertEquals(
+                0,
+                saldo.compareTo(new BigDecimal("-500.00"))
+        );
     }
 
-    // TESTE 5 - VÁRIAS MOVIMENTAÇÕES
+    // =====================================
+    // TESTE 5 - VARIAS MOVIMENTACOES
+    // =====================================
+
     @Test
     void deveSomarTodasAsMovimentacoes() throws Exception {
 
@@ -162,11 +216,16 @@ public class SaldoIntegrationTest {
 
         BigDecimal saldo = consultarSaldo();
 
-        assertEquals(0,
-                saldo.compareTo(new BigDecimal("2250.00")));
+        assertEquals(
+                0,
+                saldo.compareTo(new BigDecimal("2250.00"))
+        );
     }
 
-    // TESTE 6 - VALORES DECIMAIS
+    // =====================================
+    // TESTE 6 - VALORES COM CENTAVOS
+    // =====================================
+
     @Test
     void deveCalcularSaldoComCentavos() throws Exception {
 
@@ -176,7 +235,9 @@ public class SaldoIntegrationTest {
 
         BigDecimal saldo = consultarSaldo();
 
-        assertEquals(0,
-                saldo.compareTo(new BigDecimal("100.50")));
+        assertEquals(
+                0,
+                saldo.compareTo(new BigDecimal("100.50"))
+        );
     }
 }
